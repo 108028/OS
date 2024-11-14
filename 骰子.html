@@ -94,7 +94,7 @@
         }
 
         function rollDice() {
-            const result = Math.floor(Math.random() * 6) + 1;
+            const result = Math.floor(Math.random() * 6) + 1;  // 正確範圍為 1 到 6
             dice.textContent = result;
             dice.style.transform = "scale(1.2)";
             setTimeout(() => dice.style.transform = "scale(1)", 200);
