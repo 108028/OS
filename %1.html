@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>骰子遊戲</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: white;
+            color: black;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .dark-mode {
+            background-color: #333;
+            color: white;
+        }
+        #dice {
+            font-size: 5em;
+            margin: 20px;
+            transition: transform 0.5s;
+        }
+        #history {
+            width: 100%;
+            max-width: 300px;
+            margin: 10px 0;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>骰子遊戲</h1>
+    <div id="dice">🎲</div>
+    <button onclick="rollDice()">擲骰子</button>
+    <button onclick="toggleDarkMode()">深色模式</button>
+    <button onclick="exportHistory()">導出歷史</button>
+    <input type="file" accept=".json" onchange="importHistory(event)">
+    
+    <h2>歷史紀錄</h2>
+    <ul id="history"></ul>
+
+    <script>
+        let history = [];
+        const dice = document.getElementById("dice");
+        const historyList = document.getElementById("history");
+
+        function rollDice() {
+            const result = Math.floor(Math.random() * 6) + 1;
+            dice.style.transform = "rotate(" + (Math.random() * 360) + "deg)";
+            dice.textContent = "🎲 " + result;
+            history.push(result);
+            updateHistory();
+        }
+
+        function updateHistory() {
+            historyList.innerHTML = history.map(num => `<li>${num}</li>`).join("");
+        }
+
+        function exportHistory() {
+            const dataStr = JSON.stringify(history);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "history.json";
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importHistory(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    history = JSON.parse(e.target.result);
+                    updateHistory();
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark-mode");
+        }
+    </script>
+</body>
+</html>
